@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "175639545018",
+    "project_id": "postly-d1763",
+    "storage_bucket": "postly-d1763.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175639545018:android:0e6cbd6f1471566f7f6e83",
+        "android_client_info": {
+          "package_name": "com.victor.postly"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3mN02F2e2xvh4jkXmsYyGiyuL0v67O8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:175639545018:android:188c3883523a4f267f6e83",
+        "android_client_info": {
+          "package_name": "posty.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3mN02F2e2xvh4jkXmsYyGiyuL0v67O8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
