@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.victor.postly" />
+                  <option name="mobileSdkAppId" value="1:175639545018:android:0e6cbd6f1471566f7f6e83" />
+                  <option name="projectId" value="postly-d1763" />
+                  <option name="projectNumber" value="175639545018" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

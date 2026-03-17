@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">postly</string>
+    <string name="login_to_postly">Logue no Postly</string>
+    <string name="username">Nome de usuário</string>
+    <string name="name">Nome</string>
+    <string name="email">Email</string>
+    <string name="password">Senha</string>
+    <string name="confirm_password">Confirme sua senha</string>
+    <string name="login">Entrar</string>
+    <string name="create_new_account">Criar nova conta</string>
+    <string name="create_account">Criar conta</string>
+    <string name="back_to_login">Voltar ao login</string>
+    <string name="forgot_my_password">Esqueci minha senha</string>
+</resources>
