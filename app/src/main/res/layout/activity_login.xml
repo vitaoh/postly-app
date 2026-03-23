@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:textColor="@color/secundary"
+                    android:textColor="@color/primary"
                     android:textColorHint="@color/primary" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -102,8 +102,8 @@
                     android:layout_height="wrap_content"
                     android:inputType="textPassword"
                     android:maxLines="1"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textColorHint="?attr/colorPrimary" />
+                    android:textColor="@color/primary"
+                    android:textColorHint="@color/primary" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
