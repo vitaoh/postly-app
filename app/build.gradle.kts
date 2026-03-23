@@ -49,6 +49,16 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.ai)
+
+    // Firebase BOM — centraliza versões
+    implementation(platform("com.google.firebase:firebase-bom:33.1.0"))
+
+    // Firebase Authentication ← NOVO
+    implementation("com.google.firebase:firebase-auth-ktx")
+
+    // Firebase Firestore
+    implementation(libs.firebase.firestore)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
