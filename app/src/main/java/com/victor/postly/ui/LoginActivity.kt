@@ -1,4 +1,4 @@
-package com.victor.postly
+package com.victor.postly.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.auth.FirebaseAuth
+import com.victor.postly.R
 import com.victor.postly.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
@@ -103,6 +104,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+
     private fun goToHome() {
         val intent = Intent(this, HomeActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
@@ -114,4 +116,5 @@ class LoginActivity : AppCompatActivity() {
         binding.btnCreateUser.isEnabled = !isLoading
         binding.btnLogin.text = if (isLoading) "Entrando..." else getString(R.string.login)
     }
+
 }

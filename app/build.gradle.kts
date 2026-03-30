@@ -56,8 +56,8 @@ dependencies {
     // Firebase Authentication ← NOVO
     implementation("com.google.firebase:firebase-auth-ktx")
 
-    // Firebase Firestore
-    implementation(libs.firebase.firestore)
+    // Glide para as imagens
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

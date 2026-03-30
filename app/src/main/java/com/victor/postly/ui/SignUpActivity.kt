@@ -1,4 +1,4 @@
-package com.victor.postly
+package com.victor.postly.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.victor.postly.R
 import com.victor.postly.databinding.ActivitySignupBinding
 
 class SignUpActivity : AppCompatActivity() {

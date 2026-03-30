@@ -12,13 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Postly">
         <activity
-            android:name=".HomeActivity"
+            android:name=".ui.NewPostDialog"
             android:exported="false" />
         <activity
-            android:name=".SignUpActivity"
+            android:name=".ui.HomeActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

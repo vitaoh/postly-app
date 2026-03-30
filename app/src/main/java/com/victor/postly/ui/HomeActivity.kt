@@ -1,4 +1,4 @@
-package com.victor.postly
+package com.victor.postly.ui
 
 import android.content.Intent
 import android.os.Bundle
