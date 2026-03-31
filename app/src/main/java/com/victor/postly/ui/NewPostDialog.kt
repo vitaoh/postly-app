@@ -28,7 +28,6 @@ class NewPostDialog : DialogFragment() {
     private val converter = Base64Converter()
     private val auth = UserAuth()
 
-    // Abre a galeria e recebe a imagem selecionada
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         uri ?: return@registerForActivityResult
         val bitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -96,7 +95,8 @@ class NewPostDialog : DialogFragment() {
 
         val post = Post(
             description = description,
-            image = imageBase64
+            image = imageBase64,
+            timestamp = System.currentTimeMillis()
         )
 
         PostDao().addPost(

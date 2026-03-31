@@ -1,5 +1,6 @@
 package com.victor.postly.dao
 
+import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.victor.postly.model.Post
@@ -27,6 +28,9 @@ class PostDao {
                 val posts = result.mapNotNull { it.toObject(Post::class.java) }
                 onResult(posts)
             }
-            .addOnFailureListener { onResult(emptyList()) }
+            .addOnFailureListener { e ->
+                Log.e("PostDao", "Erro ao buscar posts: ${e.message}")
+                onResult(emptyList())
+            }
     }
 }
