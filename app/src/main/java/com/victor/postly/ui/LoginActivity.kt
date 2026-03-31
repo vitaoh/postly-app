@@ -7,14 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.auth.FirebaseAuth
 import com.victor.postly.R
+import com.victor.postly.auth.UserAuth
 import com.victor.postly.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var auth: FirebaseAuth
+    private val auth = UserAuth()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,10 +29,7 @@ class LoginActivity : AppCompatActivity() {
             insets
         }
 
-        auth = FirebaseAuth.getInstance()
-
-        // Se já está logado, vai direto pra Home
-        if (auth.currentUser != null) {
+        if (auth.isLoggedIn()) {
             goToHome()
             return
         }
@@ -78,15 +75,18 @@ class LoginActivity : AppCompatActivity() {
 
         setLoading(true)
 
-        auth.signInWithEmailAndPassword(email, senha)
-            .addOnSuccessListener {
+        auth.login(
+            email = email,
+            password = senha,
+            onSuccess = {
                 setLoading(false)
                 goToHome()
-            }
-            .addOnFailureListener { e ->
+            },
+            onError = { msg ->
                 setLoading(false)
-                Toast.makeText(this, "Erro ao entrar: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Erro ao entrar: $msg", Toast.LENGTH_LONG).show()
             }
+        )
     }
 
     private fun sendPasswordReset() {
@@ -95,20 +95,24 @@ class LoginActivity : AppCompatActivity() {
             binding.tilEmail.error = "Digite seu e-mail para redefinir a senha"
             return
         }
-        auth.sendPasswordResetEmail(email)
-            .addOnSuccessListener {
+
+        auth.sendPasswordReset(
+            email = email,
+            onSuccess = {
                 Toast.makeText(this, "E-mail de redefinição enviado!", Toast.LENGTH_LONG).show()
+            },
+            onError = { msg ->
+                Toast.makeText(this, "Erro: $msg", Toast.LENGTH_LONG).show()
             }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Erro: ${e.message}", Toast.LENGTH_LONG).show()
-            }
+        )
     }
 
-
     private fun goToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(
+            Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        )
     }
 
     private fun setLoading(isLoading: Boolean) {
@@ -116,5 +120,4 @@ class LoginActivity : AppCompatActivity() {
         binding.btnCreateUser.isEnabled = !isLoading
         binding.btnLogin.text = if (isLoading) "Entrando..." else getString(R.string.login)
     }
-
 }

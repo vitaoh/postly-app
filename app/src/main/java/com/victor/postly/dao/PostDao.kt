@@ -1,27 +1,32 @@
 package com.victor.postly.dao
 
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.victor.postly.model.Post
 
 class PostDao {
-    private val db = FirebaseFirestore.getInstance()
-    private val postsCollection = db.collection("posts")
 
-    fun addPost(post: Post, callback: (Boolean, String?) -> Unit) {
-        post.id = postsCollection.document().id
-        postsCollection.document(post.id).set(post)
-            .addOnSuccessListener { callback(true, null) }
-            .addOnFailureListener { e -> callback(false, e.message) }
+    private val db = FirebaseFirestore.getInstance()
+    private val collection = db.collection("posts")
+
+    fun addPost(
+        post: Post,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        collection.add(post)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { onError(it.message ?: "Erro ao criar post") }
     }
 
-    fun getPosts(callback: (List<Post>) -> Unit) {
-        postsCollection.orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
+    fun getPosts(onResult: (List<Post>) -> Unit) {
+        collection
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
-                val posts = result.mapNotNull { doc ->
-                    doc.toObject(Post::class.java).copy(id = doc.id)
-                }
-                callback(posts)
+                val posts = result.mapNotNull { it.toObject(Post::class.java) }
+                onResult(posts)
             }
+            .addOnFailureListener { onResult(emptyList()) }
     }
 }

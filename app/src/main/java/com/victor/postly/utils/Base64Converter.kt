@@ -2,26 +2,23 @@ package com.victor.postly.utils
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.drawable.BitmapDrawable
-import android.graphics.drawable.Drawable
 import android.util.Base64
-import androidx.core.graphics.scale
 import java.io.ByteArrayOutputStream
 
 class Base64Converter {
-    companion object {
-        fun drawableToString(drawable: Drawable): String {
-            val pictureDrawable = drawable as BitmapDrawable
-            val bitmap = pictureDrawable.bitmap.scale(150, 150)
-            val outputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-            val imageString = Base64.encodeToString(outputStream.toByteArray(), 0)
-            return imageString
-        }
 
-        fun stringToBitmap(imageString: String): Bitmap {
-            val imageBytes = Base64.decode(imageString, Base64.DEFAULT)
-            return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    fun bitmapToString(bitmap: Bitmap): String {
+        val baos = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos)
+        return Base64.encodeToString(baos.toByteArray(), Base64.DEFAULT)
+    }
+
+    fun stringToBitmap(base64: String): Bitmap? {
+        return try {
+            val bytes = Base64.decode(base64, Base64.DEFAULT)
+            BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+        } catch (e: Exception) {
+            null
         }
     }
 }

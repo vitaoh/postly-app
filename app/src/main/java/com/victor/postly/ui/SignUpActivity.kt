@@ -7,17 +7,17 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.victor.postly.R
+import com.victor.postly.auth.UserAuth
+import com.victor.postly.dao.UserDao
 import com.victor.postly.databinding.ActivitySignupBinding
+import com.victor.postly.model.User
 
 class SignUpActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySignupBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+    private val auth = UserAuth()
+    private val userDao = UserDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,9 +32,6 @@ class SignUpActivity : AppCompatActivity() {
             insets
         }
 
-        auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
-
         setupListeners()
     }
 
@@ -44,7 +41,7 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         binding.btnBackLogin.setOnClickListener {
-            finish() // Volta para LoginActivity
+            finish()
         }
     }
 
@@ -55,7 +52,6 @@ class SignUpActivity : AppCompatActivity() {
         val password = binding.edtPassword.text.toString()
         val confirmPassword = binding.edtConfirmPassword.text.toString()
 
-        // Limpa erros anteriores
         binding.tilUsername.error = null
         binding.tilName.error = null
         binding.tilEmail.error = null
@@ -99,47 +95,45 @@ class SignUpActivity : AppCompatActivity() {
 
         setLoading(true)
 
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnSuccessListener { result ->
-                val uid = result.user?.uid ?: return@addOnSuccessListener
-                saveUserToFirestore(uid)
-            }
-            .addOnFailureListener { e ->
+        auth.register(
+            email = email,
+            password = password,
+            onSuccess = { uid -> saveUserToFirestore(uid) },
+            onError = { msg ->
                 setLoading(false)
-                Toast.makeText(this, "Erro ao cadastrar: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Erro ao cadastrar: $msg", Toast.LENGTH_LONG).show()
             }
+        )
     }
 
     private fun saveUserToFirestore(uid: String) {
-        val username = binding.edtUsername.text.toString().trim()
-        val name = binding.edtName.text.toString().trim()
-        val email = binding.edtEmail.text.toString().trim()
-
-        val user = hashMapOf(
-            "uid" to uid,
-            "username" to username,
-            "name" to name,
-            "email" to email,
-            "createdAt" to Timestamp.now()
+        val user = User(
+            uid = uid,
+            name = binding.edtName.text.toString().trim(),
+            username = binding.edtUsername.text.toString().trim().lowercase(),
+            email = binding.edtEmail.text.toString().trim()
         )
 
-        db.collection("users").document(uid)
-            .set(user)
-            .addOnSuccessListener {
+        userDao.save(
+            user = user,
+            onSuccess = {
                 setLoading(false)
                 Toast.makeText(this, "Conta criada com sucesso!", Toast.LENGTH_SHORT).show()
                 goToHome()
-            }
-            .addOnFailureListener { e ->
+            },
+            onError = { msg ->
                 setLoading(false)
-                Toast.makeText(this, "Erro ao salvar dados: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Erro ao salvar dados: $msg", Toast.LENGTH_LONG).show()
             }
+        )
     }
 
     private fun goToHome() {
-        val intent = Intent(this, HomeActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(
+            Intent(this, HomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        )
     }
 
     private fun setLoading(isLoading: Boolean) {

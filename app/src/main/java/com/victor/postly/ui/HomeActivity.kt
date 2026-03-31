@@ -2,20 +2,24 @@ package com.victor.postly.ui
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.victor.postly.adapter.PostAdapter
+import com.victor.postly.auth.UserAuth
+import com.victor.postly.dao.PostDao
 import com.victor.postly.databinding.ActivityHomeBinding
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
-    private lateinit var auth: FirebaseAuth
-    private lateinit var db: FirebaseFirestore
+    private val auth = UserAuth()
+    private val postDao = PostDao()
+    private val adapter = PostAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,49 +34,43 @@ class HomeActivity : AppCompatActivity() {
             insets
         }
 
-        auth = FirebaseAuth.getInstance()
-        db = FirebaseFirestore.getInstance()
-
-        val currentUser = auth.currentUser
-        if (currentUser == null) {
+        if (!auth.isLoggedIn()) {
             goToLogin()
             return
         }
 
-        loadUserData(currentUser.uid)
+        setupRecycler()
+        loadPosts()
         setupListeners()
     }
 
-    private fun loadUserData(uid: String) {
-        db.collection("users").document(uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val name = document.getString("name") ?: ""
-                    val username = document.getString("username") ?: ""
-                    // Exemplo: exibir dados se você tiver TextViews na activity_home.xml
-                    // binding.txtWelcome.text = "Olá, $name!"
-                    // binding.txtUsername.text = "@$username"
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(this, "Erro ao carregar dados: ${e.message}", Toast.LENGTH_SHORT).show()
-            }
+    private fun setupRecycler() {
+        binding.recyclerFeed.apply {
+            this.adapter = this@HomeActivity.adapter
+            layoutManager = LinearLayoutManager(this@HomeActivity)
+        }
+    }
+
+    private fun loadPosts() {
+        postDao.getPosts { posts ->
+            adapter.updatePosts(posts)
+            binding.layoutEmpty.visibility = if (posts.isEmpty()) View.VISIBLE else View.GONE
+        }
     }
 
     private fun setupListeners() {
-        // Exemplo de botão de logout — adicione btnLogout no activity_home.xml se quiser
-        // binding.btnLogout.setOnClickListener { logout() }
-    }
-
-    private fun logout() {
-        auth.signOut()
-        goToLogin()
+        binding.fabNewPost.setOnClickListener {
+            val dialog = NewPostDialog()
+            dialog.onPostCreated = { loadPosts() }
+            dialog.show(supportFragmentManager, "new_post")
+        }
     }
 
     private fun goToLogin() {
-        val intent = Intent(this, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        startActivity(intent)
+        startActivity(
+            Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        )
     }
 }
