@@ -95,15 +95,14 @@ class SignUpActivity : AppCompatActivity() {
 
         setLoading(true)
 
-        auth.register(
-            email = email,
-            password = password,
-            onSuccess = { uid -> saveUserToFirestore(uid) },
-            onError = { msg ->
+        auth.register(email, password) { sucesso, erro ->
+            if (sucesso) {
+                saveUserToFirestore(auth.getCurrentUid()!!)
+            } else {
                 setLoading(false)
-                Toast.makeText(this, "Erro ao cadastrar: $msg", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, erro ?: "Erro ao cadastrar", Toast.LENGTH_LONG).show()
             }
-        )
+        }
     }
 
     private fun saveUserToFirestore(uid: String) {

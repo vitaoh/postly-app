@@ -75,18 +75,14 @@ class LoginActivity : AppCompatActivity() {
 
         setLoading(true)
 
-        auth.login(
-            email = email,
-            password = senha,
-            onSuccess = {
-                setLoading(false)
+        auth.login(email, senha) { sucesso, erro ->
+            setLoading(false)
+            if (sucesso) {
                 goToHome()
-            },
-            onError = { msg ->
-                setLoading(false)
-                Toast.makeText(this, "Erro ao entrar: $msg", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, erro ?: "Erro ao entrar", Toast.LENGTH_LONG).show()
             }
-        )
+        }
     }
 
     private fun sendPasswordReset() {
@@ -96,15 +92,13 @@ class LoginActivity : AppCompatActivity() {
             return
         }
 
-        auth.sendPasswordReset(
-            email = email,
-            onSuccess = {
+        auth.sendPasswordReset(email) { sucesso ->
+            if (sucesso) {
                 Toast.makeText(this, "E-mail de redefinição enviado!", Toast.LENGTH_LONG).show()
-            },
-            onError = { msg ->
-                Toast.makeText(this, "Erro: $msg", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(this, "Erro ao enviar e-mail", Toast.LENGTH_LONG).show()
             }
-        )
+        }
     }
 
     private fun goToHome() {
