@@ -3,7 +3,6 @@ package com.victor.postly.ui
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -12,13 +11,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.victor.postly.adapter.PostAdapter
 import com.victor.postly.auth.UserAuth
 import com.victor.postly.dao.PostDao
+import com.victor.postly.dao.UserDao
 import com.victor.postly.databinding.ActivityHomeBinding
+import com.victor.postly.utils.Base64Converter
 
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityHomeBinding
     private val auth = UserAuth()
     private val postDao = PostDao()
+    private val userDao = UserDao()
+    private val converter = Base64Converter()
     private val adapter = PostAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +47,25 @@ class HomeActivity : AppCompatActivity() {
         setupListeners()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadAvatar()
+    }
+
     private fun setupRecycler() {
         binding.recyclerFeed.apply {
             this.adapter = this@HomeActivity.adapter
             layoutManager = LinearLayoutManager(this@HomeActivity)
+        }
+    }
+
+    private fun loadAvatar() {
+        val uid = auth.getCurrentUid() ?: return
+        userDao.getUser(uid) { user ->
+            if (!user?.photo.isNullOrEmpty()) {
+                val bitmap = converter.stringToBitmap(user!!.photo!!)
+                binding.imgAvatar.setImageBitmap(bitmap)
+            }
         }
     }
 
@@ -59,6 +77,10 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupListeners() {
+        binding.imgAvatar.setOnClickListener {
+            startActivity(Intent(this, ProfileActivity::class.java))
+        }
+
         binding.fabNewPost.setOnClickListener {
             val dialog = NewPostDialog()
             dialog.onPostCreated = { loadPosts() }
